@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+
+# Environment
+.env
+.venv/
+venv/
+
+# Generated files
+uploads/
+fonts/cache/
+
+# Large local binaries / archives
+ffmpeg.exe
+ffplay.exe
+ffprobe.exe
+ffmpeg_temp.zip

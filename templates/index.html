@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaptionDev - Free Video Subtitles & Auto-Captions</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-glow"></div>
+    
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/capdev_logo.jpg') }}" alt="CaptionDev Logo" class="logo-img" style="height: 42px; border-radius: 6px; mix-blend-mode: screen;">
+            <h1>CaptionDev</h1>
+        </div>
+        <nav>
+            <a href="#">How it works</a>
+            <a href="#">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Beautiful Auto-Synced Custom Captions</h2>
+            <p>100% Free. Runs locally. Fully customizable fonts, styling, and word-level editing.</p>
+        </section>
+
+        <section class="upload-section" id="upload-section">
+            <div class="upload-container" id="drop-zone">
+                <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                <h3>Drag & Drop your video here</h3>
+                <p>Supports MP4, MOV (Max 5 mins, 130MB)</p>
+                <input type="file" id="video-upload" accept="video/mp4, video/quicktime" hidden>
+                <button class="btn-primary" onclick="document.getElementById('video-upload').click()">Browse Files</button>
+            </div>
+        </section>
+
+        <section class="progress-section hidden" id="progress-section">
+            <div class="processing-card">
+                <div class="status-header">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i>
+                    <h3 id="status-text">Uploading...</h3>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                </div>
+                <p id="progress-message" class="sub-text">Please wait while we process your video.</p>
+            </div>
+        </section>
+
+        <section class="editor-section hidden" id="editor-section">
+            <div class="processing-card" style="max-width: 800px;">
+                <h2>Review & Style Captions</h2>
+                <div class="editor-options" style="display:flex; justify-content:space-between; margin: 20px 0;">
+                    <div>
+                        <label>Style: </label>
+                        <select id="style-select" class="form-select">
+                            <option value="typewriter" selected>Typewriter (Words appear as spoken)</option>
+                            <option value="normal">Normal (Classic standard subtitles)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Position: </label>
+                        <select id="pos-select" class="form-select">
+                            <option value="top">Top</option>
+                            <option value="middle" selected>Middle</option>
+                            <option value="bottom">Bottom</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="editor-options" style="display:flex; justify-content:space-between; margin: 20px 0; align-items:center;">
+                    <div>
+                        <label>Font: </label>
+                        <select id="font-select" class="form-select">
+                            <option value="Arial">Arial (Clean)</option>
+                            <option value="Impact">Impact (Meme Bold)</option>
+                            <option value="Times New Roman">Times New Roman (Serif)</option>
+                            <option value="Verdana">Verdana (Wide)</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Appearance Controls -->
+                <div class="editor-options" style="display:flex; justify-content:space-between; margin: 20px 0; align-items:flex-end;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; flex: 1; margin-right: 10px;">
+                        <label style="display:block; margin-bottom:10px;"><input type="checkbox" id="hl-enable" style="cursor: pointer;" checked> Highlight Live Word</label>
+                        <input type="color" id="color-picker" value="#00ffff" style="background:transparent; border:none; cursor:pointer; height:30px; vertical-align:middle; width:100%;">
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; flex: 1; margin-left: 10px;">
+                        <label style="display:block; margin-bottom:10px;"><input type="checkbox" id="bg-enable" style="cursor: pointer;" checked> Background Box</label>
+                        <input type="color" id="bg-color-picker" value="#000000" style="background:transparent; border:none; cursor:pointer; height:30px; vertical-align:middle; width:45%;">
+                        <input type="range" id="bg-opacity" title="Opacity" min="0" max="100" value="50" style="vertical-align:middle; width:45%; margin-left: 5%;">
+                    </div>
+                </div>
+                <!-- Live Preview Widget -->
+                <div class="live-preview-container">
+                    <div class="preview-video-frame" id="preview-frame" style="justify-content: center;">
+                        <p id="preview-text-block">
+                            <span class="preview-base">This is a </span>
+                            <span class="preview-active" id="preview-highlight">Sample</span>
+                            <span class="preview-base"> caption.</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="transcript-grid" id="transcript-grid">
+                    <!-- Javascript populates words here -->
+                </div>
+                <button class="btn-primary" onclick="submitBurn()" style="width:100%; margin-top:20px;">Render & Burn Video</button>
+            </div>
+        </section>
+
+        <section class="result-section hidden" id="result-section">
+            <div class="success-card">
+                <i class="fa-solid fa-circle-check success-icon"></i>
+                <h2>Video Ready!</h2>
+                <p>Your video has been successfully captioned and styled.</p>
+                <a href="#" class="btn-primary btn-download" id="download-btn" download>
+                    <i class="fa-solid fa-download"></i> Download Video
+                </a>
+                <button class="btn-secondary" onclick="resetApp()">Caption Another Video</button>
+            </div>
+        </section>
+        
+        <section class="feature-preview">
+             <div class="preview-box">
+                <p class="preview-text">
+                    <span class="eng" style="color: #FFF;">Lightning Fast</span>
+                    <span class="san" style="color: var(--primary-color); font-weight:800; text-shadow: 0 0 20px rgba(212, 175, 55, 0.4); margin: 0 10px;">Offline</span>
+                    <span class="eng" style="color: #FFF;">Transcription</span>
+                </p>
+                <p class="caption">Fully private, no API required. Edit your words before you burn!</p>
+             </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 CaptionDev. Built for the community.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
