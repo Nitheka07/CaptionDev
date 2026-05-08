@@ -9,7 +9,8 @@ def process_audio(video_path, audio_output_path):
     """
     Extracts audio from video and sends it to OpenAI Whisper for word-level transcription.
     """
-    ffmpeg_exe = os.path.join(os.path.dirname(__file__), '..', 'ffmpeg.exe')
+    local_ffmpeg = os.path.join(os.path.dirname(__file__), '..', 'ffmpeg.exe')
+    ffmpeg_exe = local_ffmpeg if os.path.isfile(local_ffmpeg) else 'ffmpeg'
     # 1. Extract audio and compress as mp3 using ffmpeg
     command = [
         ffmpeg_exe, "-y", "-i", video_path,

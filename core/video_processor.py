@@ -8,11 +8,12 @@ def burn_subtitles(input_video_path, ass_subtitle_path, output_video_path):
     Assumes FFmpeg is available in the system PATH.
     """
     
-    ffmpeg_exe = os.path.join(os.path.dirname(__file__), '..', 'ffmpeg.exe')
-    
-    # We must ensure path format for ASS filter is correct, especially on Windows
-    # ASS filter requires escaping colons/backslashes if using absolute paths
-    ass_path_escaped = ass_subtitle_path.replace('\\', '\\\\').replace(':', '\\:')
+    local_ffmpeg = os.path.join(os.path.dirname(__file__), '..', 'ffmpeg.exe')
+    ffmpeg_exe = local_ffmpeg if os.path.isfile(local_ffmpeg) else 'ffmpeg'
+
+    # Normalize path separators and escape for ASS filter
+    ass_norm = ass_subtitle_path.replace('\\', '/')
+    ass_path_escaped = ass_norm.replace(':', '\\:')
     
     # 1. Build Isolated Fontconfig cache XML to circumvent permissions
     fonts_dir = os.path.join(os.path.dirname(__file__), '..', 'fonts')

@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: captiondev
+    runtime: python
+    buildCommand: "apt-get install -y ffmpeg && pip install -r requirements.txt"
+    startCommand: "gunicorn app:app --timeout 300 --workers 1 --threads 4"
+    disk:
+      name: uploads
+      mountPath: /app/uploads
+      sizeGB: 5
